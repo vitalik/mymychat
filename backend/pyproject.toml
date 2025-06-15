@@ -1,0 +1,52 @@
+# LINT =========================================================
+[tool.ruff]
+line-length = 120
+
+exclude = ["*migrations/*.py"]
+
+[tool.ruff.format]
+quote-style = 'preserve'
+
+
+[tool.ruff.lint]
+select = [
+    "B",    # flake8-bugbear
+    "C",    # flake8-comprehensions
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "FURB", # refurb
+    # "I",    # isort
+    "UP",   # pyupgrade
+    "W",    # pycodestyle warnings
+]
+ignore = [
+    "E501", # line too long, handled by ruff
+    "B008", # do not perform function calls in argument defaults
+    "C901", # too complex
+    "PTH123", # pathlib open
+]
+
+[tool.ruff.lint.per-file-ignores]
+# "tests/*" = ["I001"]
+
+# Tests =========================================================
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# addopts = "--cov=backend"
+
+
+[tool.coverage.run]
+branch = true
+omit = [
+    "*/migrations/*",
+    "manage.py",
+    "wsgi.py",
+    "asgi.py",
+    "backend/settings*",
+]
+
+
+[tool.coverage.report]
+fail_under = 60
+skip_covered = true
+show_missing = true

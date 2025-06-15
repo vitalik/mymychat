@@ -1,0 +1,368 @@
+// Import custom variables first
+@import 'variables';
+
+// Import Bootstrap
+@import 'bootstrap/scss/bootstrap';
+
+// Import Bootstrap Icons
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+// T3.chat inspired CSS custom properties for theming
+:root {
+  // Light theme colors
+  --primary-hue: 334.2;
+  --primary-saturation: 74.9%;
+  --primary-lightness: 56.9%;
+  
+  --background-hue: 293.7;
+  --background-saturation: 46.3%;
+  --background-lightness: 92%;
+  
+  --foreground-hue: 296;
+  --foreground-saturation: 56%;
+  --foreground-lightness: 21%;
+  
+  --secondary-hue: 314.7;
+  --secondary-saturation: 61.6%;
+  --secondary-lightness: 85.7%;
+  
+  --sidebar-bg-hue: 290.3;
+  --sidebar-bg-saturation: 49.2%;
+  --sidebar-bg-lightness: 87.6%;
+  
+  --chat-bg-hue: 300;
+  --chat-bg-saturation: 56%;
+  --chat-bg-lightness: 98%;
+  
+  --border-hue: 304.8;
+  --border-saturation: 61%;
+  --border-lightness: 83.9%;
+}
+
+[data-theme="dark"] {
+  // Dark theme colors
+  --background-hue: 313.8;
+  --background-saturation: 24.5%;
+  --background-lightness: 10.4%;
+  
+  --foreground-hue: 270;
+  --foreground-saturation: 20%;
+  --foreground-lightness: 97.8%;
+  
+  --primary-hue: 332;
+  --primary-saturation: 100%;
+  --primary-lightness: 32%;
+  
+  --secondary-hue: 273.8;
+  --secondary-saturation: 15.1%;
+  --secondary-lightness: 20.8%;
+  
+  --sidebar-bg-hue: 273.8;
+  --sidebar-bg-saturation: 15.1%;
+  --sidebar-bg-lightness: 15%;
+  
+  --chat-bg-hue: 273.8;
+  --chat-bg-saturation: 15.1%;
+  --chat-bg-lightness: 12%;
+  
+  --border-hue: 273.8;
+  --border-saturation: 15.1%;
+  --border-lightness: 25%;
+}
+
+// Custom styles
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: $body-bg;
+  color: $body-color;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+// Theme switch component
+.theme-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+    
+    &:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+  }
+  
+  input:checked + .slider {
+    background-color: $primary;
+  }
+  
+  input:checked + .slider:before {
+    transform: translateX(26px);
+  }
+}
+
+// Chat layout
+.chat-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+// Sidebar styles
+.chat-sidebar {
+  width: 240px;
+  background: hsl(var(--sidebar-bg-hue), var(--sidebar-bg-saturation), var(--sidebar-bg-lightness));
+  color: hsl(var(--foreground-hue), var(--foreground-saturation), var(--foreground-lightness));
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  border-right: 1px solid hsl(var(--border-hue), var(--border-saturation), var(--border-lightness));
+  transition: background-color 0.3s ease;
+  
+  .sidebar-header {
+    padding: $spacer * 0.75;
+    border-bottom: 1px solid hsl(var(--border-hue), var(--border-saturation), var(--border-lightness));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    h5 {
+      margin: 0;
+      font-weight: 600;
+      font-size: 1rem;
+      line-height: $line-height-sm;
+    }
+  }
+  
+  .chat-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: $spacer * 0.5;
+  }
+  
+  .chat-item {
+    padding: $spacer * 0.5 $spacer * 0.75;
+    margin-bottom: $spacer * 0.25;
+    border-radius: $border-radius;  // Use Bootstrap variable
+    cursor: pointer;
+    transition: $transition-base;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    &.active {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .chat-headline {
+      font-size: 0.875rem;
+      line-height: $line-height-sm;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+// Main chat area
+.chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: hsl(var(--chat-bg-hue), var(--chat-bg-saturation), var(--chat-bg-lightness));
+  transition: background-color 0.3s ease;
+}
+
+// Welcome screen
+.chat-welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  padding: $spacer * 2;
+  
+  h3 {
+    margin-bottom: $spacer;
+    color: hsl(var(--foreground-hue), var(--foreground-saturation), var(--foreground-lightness));
+    line-height: $line-height-sm;
+  }
+  
+  p {
+    color: hsl(var(--foreground-hue), var(--foreground-saturation), calc(var(--foreground-lightness) + 20%));
+    margin-bottom: $spacer * 1.5;
+    line-height: $line-height-base;
+  }
+  
+  .new-chat-form {
+    width: 100%;
+    max-width: 600px;
+    
+    textarea {
+      width: 100%;
+      margin-bottom: $spacer;
+      border-radius: $input-border-radius;
+      border: 1px solid $border-color;
+      padding: $input-padding-y $input-padding-x;  // Use Bootstrap variables
+      background-color: $body-bg;
+      color: $body-color;
+      transition: $transition-base;
+      line-height: $line-height-base;
+      
+      &:focus {
+        outline: none;
+        border-color: $primary;
+        box-shadow: 0 0 0 0.2rem rgba($primary, 0.1);
+      }
+    }
+    
+    button {
+      padding: $btn-padding-y $btn-padding-x * 2;  // Use Bootstrap variables
+      border-radius: $btn-border-radius;
+    }
+  }
+}
+
+// Conversation styles
+.chat-conversation {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  
+  .messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: $spacer * 1.25;
+    background: hsl(var(--chat-bg-hue), var(--chat-bg-saturation), var(--chat-bg-lightness));
+    
+    .message-group {
+      margin-bottom: $spacer * 1.25;
+    }
+  }
+}
+
+// Message styles
+.message {
+  margin-bottom: $spacer * 0.75;
+  
+  .message-content {
+    padding: $spacer * 0.75 $spacer;
+    border-radius: $border-radius-lg;  // Smaller border radius
+    max-width: 75%;  // Slightly wider
+    word-wrap: break-word;
+  }
+  
+  &.message-user .message-content {
+    background: $primary;
+    color: white;
+    margin-left: auto;
+    text-align: right;
+  }
+  
+  &.message-assistant .message-content {
+    background: hsl(var(--background-hue), var(--background-saturation), var(--background-lightness));
+    border: 1px solid hsl(var(--border-hue), var(--border-saturation), var(--border-lightness));
+    margin-right: auto;
+    color: hsl(var(--foreground-hue), var(--foreground-saturation), var(--foreground-lightness));
+  }
+  
+  &.message-loading .message-content {
+    background: hsl(var(--background-hue), var(--background-saturation), calc(var(--background-lightness) - 5%));
+  }
+  
+  .message-text {
+    white-space: pre-wrap;
+    line-height: $line-height-base;  // Use Bootstrap variable
+  }
+  
+  .status-indicator {
+    color: hsl(var(--foreground-hue), var(--foreground-saturation), calc(var(--foreground-lightness) + 30%));
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+  }
+}
+
+// Input area styles
+.chat-input-container {
+  border-top: 1px solid hsl(var(--border-hue), var(--border-saturation), var(--border-lightness));
+  background: hsl(var(--background-hue), var(--background-saturation), var(--background-lightness));
+  padding: $spacer * 0.75;
+  transition: background-color 0.3s ease;
+  
+  .chat-input-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    gap: $spacer * 0.75;
+    align-items: flex-end;
+    
+    .form-control {
+      flex: 1;
+      resize: none;
+      border-radius: $input-border-radius;
+      border: 1px solid hsl(var(--border-hue), var(--border-saturation), var(--border-lightness));
+      padding: $input-padding-y $input-padding-x;  // Use Bootstrap variables
+      background-color: hsl(var(--background-hue), var(--background-saturation), var(--background-lightness));
+      color: hsl(var(--foreground-hue), var(--foreground-saturation), var(--foreground-lightness));
+      transition: $transition-base;
+      line-height: $line-height-base;
+      
+      &:focus {
+        outline: none;
+        border-color: hsl(var(--primary-hue), var(--primary-saturation), var(--primary-lightness));
+        box-shadow: 0 0 0 0.2rem rgba($primary, 0.1);
+      }
+    }
+    
+    .send-button {
+      padding: $btn-padding-y $btn-padding-x * 1.5;
+      border-radius: $btn-border-radius;
+      white-space: nowrap;
+    }
+  }
+}
+
+// Dark theme adjustments for dark mode
+[data-theme="dark"] {
+  .chat-sidebar {
+    color: hsl(var(--foreground-hue), var(--foreground-saturation), var(--foreground-lightness));
+    
+    .sidebar-header {
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+}
