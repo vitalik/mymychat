@@ -1,9 +1,11 @@
 import os
+import json
 import asyncio
 import traceback
 from django.core.management.color import make_style
 from pydantic_ai import Agent
 from pydantic_ai.models.openai import OpenAIModel
+from pydantic_ai.messages import ModelMessagesTypeAdapter
 from pydantic_ai.providers.openrouter import OpenRouterProvider
 from chat.models import Prompt
 from chat.redis_pubsub import pubsub
@@ -36,19 +38,15 @@ class LLMWorker:
         for prompt in prompts:
             asyncio.create_task(self.process_prompt(prompt))
 
-    async def process_prompt(self, prompt):
+    async def process_prompt(self, prompt: Prompt):
         try:
             # Access prompt data directly (since we're in async context)
             prompt_id = prompt.id
-            # Use select_related to fetch the chat and user in one query
+            # Use select_related to fetch the chat and user in one query (async hook)
             prompt = await Prompt.objects.select_related('chat__user').aget(id=prompt_id)
             chat_uid = prompt.chat.uid
             chat_model = prompt.chat.model
             chat_user = prompt.chat.user
-
-            system_prompt = ()  # empty
-            if prompt.chat.system_prompt:
-                system_prompt = prompt.chat.system_prompt.text
 
             # Mark as running
             prompt.status = 'running'
@@ -65,13 +63,20 @@ class LLMWorker:
             # Parse provider and model
             provider, model_name = chat_model.split(':', 1)
 
-            # Create appropriate agent based on provider
+            # Get system prompt from chat if available
+            system_prompt = ()  # empty
+            if prompt.chat.system_prompt:
+                system_prompt = prompt.chat.system_prompt.text
+
+            # 1) Create appropriate agent based on provider --------------------------------------------------------
             if provider == 'dummy':
                 agent_model = create_dummy_model()
                 agent = Agent(model=agent_model, system_prompt=system_prompt)
+
             elif provider == 'openai':
                 key = get_openai_key(user_profile)
                 agent = Agent(model=model_name, api_key=key, system_prompt=system_prompt)
+
             elif provider == 'openrouter':
                 key = get_openrouter_key(user_profile)
                 agent_model = OpenAIModel(
@@ -82,15 +87,25 @@ class LLMWorker:
             else:
                 raise ValueError(f"Unknown provider: {provider}")
 
-            # Process with pydantic-ai streaming
-            async with agent.run_stream(prompt.input_text) as result:
-                async for message in result.stream_text(delta=True):
-                    # Append each chunk to output_text
-                    prompt.output_text += message
-                    await prompt.asave()
+            # 2) Load previous prompt messages context ----------------------------------------------------------
+            history = None
+            prev_prompt = (
+                await Prompt.objects.filter(chat_id=prompt.chat_id).exclude(id=prompt.id).order_by('-created').afirst()
+            )
+            if prev_prompt:
+                history = ModelMessagesTypeAdapter.validate_python(prev_prompt.llm_messages)
 
-                    # Publish chunk to Redis
-                    await pubsub.publish_chunk(chat_uid, prompt_id, message)
+            # print(history)
+
+            # 3) Process with pydantic-ai streaming -------------------------------------------------------------
+            async with agent.run_stream(prompt.input_text, message_history=history) as result:
+                async for chunk in result.stream_text(delta=True):
+                    # Append each chunk to output_text
+                    prompt.output_text += chunk
+                    await prompt.asave()
+                    await pubsub.publish_chunk(chat_uid, prompt_id, chunk)
+
+                prompt.llm_messages = json.loads(result.all_messages_json().decode('utf-8'))
 
             # Mark as finished
             prompt.status = 'finished'

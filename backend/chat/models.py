@@ -42,6 +42,7 @@ class Prompt(models.Model):
     result = models.CharField(max_length=10, choices=RESULT_CHOICES, null=True, blank=True)
     input_text = models.TextField()
     output_text = models.TextField(blank=True, default='')
+    llm_messages = models.JSONField(default=list, blank=True)
     created = models.DateTimeField(default=timezone.now)
     modified = models.DateTimeField(auto_now=True)
 
