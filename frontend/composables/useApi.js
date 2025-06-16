@@ -188,6 +188,20 @@ class Api {
     return await resp.json()
   }
 
+  async uploadFile(file) {
+    const formData = new FormData()
+    formData.append('file', file)
+    
+    const resp = await fetch(`${this.baseURL}/chats/files/upload`, {
+        method: 'POST',
+        headers: {
+            'Authorization': this.getAuthHeaders()['Authorization']
+        },
+        body: formData
+    })
+    return await resp.json()
+  }
+
   logout() {
     localStorage.removeItem('auth_token')
   }

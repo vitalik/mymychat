@@ -4,7 +4,8 @@
       <div v-for="(prompt, index) in chat.prompts" :key="prompt.id" class="message-group">
         <ChatMessage 
           :message="prompt.input_text" 
-          type="user" 
+          type="user"
+          :files="prompt.files" 
         />
         <ChatMessage 
           :message="prompt.output_text" 

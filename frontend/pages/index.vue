@@ -42,6 +42,13 @@
             <ToolSelector v-model="selectedTools" />
           </div>
           
+          <div class="file-upload-section mb-3">
+            <label class="form-label">
+              <i class="bi bi-paperclip me-2"></i>Attachments (Optional)
+            </label>
+            <FileUpload v-model="selectedFileIds" />
+          </div>
+          
           <textarea
             v-model="newMessage"
             class="form-control"
@@ -78,6 +85,7 @@ const systemPrompts = ref([])
 const selectedModel = ref(localStorage.getItem('selectedModel') || 'dummy:dummy')
 const selectedSystemPrompt = ref('')
 const selectedTools = ref([])
+const selectedFileIds = ref([])
 
 onMounted(() => {
   loadChats()
@@ -130,14 +138,15 @@ function startNewChat() {
 }
 
 async function createNewChat() {
-  if (!newMessage.value.trim()) return
+  if (!newMessage.value.trim() && selectedFileIds.value.length === 0) return
   
   try {
     const response = await api.createChat({
       input_text: newMessage.value,
       model: selectedModel.value,
       system_prompt: selectedSystemPrompt.value,
-      tools: selectedTools.value
+      tools: selectedTools.value,
+      file_ids: selectedFileIds.value
     })
     router.push(`/chats/${response.uid}`)
   } catch (error) {
@@ -186,7 +195,7 @@ async function createNewChat() {
   max-width: 600px;
 }
 
-.model-selection, .system-prompt-selection {
+.model-selection, .system-prompt-selection, .file-upload-section {
   text-align: left;
   
   .form-label {

@@ -181,11 +181,14 @@ function startNewChat() {
   router.push('/')
 }
 
-async function sendMessage(message) {
+async function sendMessage(data) {
   try {
-    await api.createPrompt(activeChat.value.uid, {
-      input_text: message
-    })
+    // Handle both old string format and new object format
+    const payload = typeof data === 'string' 
+      ? { input_text: data, file_ids: [] }
+      : { input_text: data.text, file_ids: data.fileIds || [] }
+    
+    await api.createPrompt(activeChat.value.uid, payload)
     // SSE will handle real-time updates, no need to manually reload
   } catch (error) {
     $toast.error('Failed to send message')

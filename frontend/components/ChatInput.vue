@@ -1,7 +1,16 @@
 <template>
   <div class="chat-input-container">
     <div class="chat-input-wrapper">
+      <FileUpload ref="fileUploadRef" v-model="fileIds" />
       <div class="input-group">
+        <button 
+          class="btn btn-link attach-button" 
+          @click="$refs.fileUploadRef.openFileDialog()"
+          type="button"
+          title="Attach files"
+        >
+          <i class="bi bi-paperclip"></i>
+        </button>
         <textarea
           ref="textareaRef"
           v-model="message"
@@ -32,6 +41,8 @@ const emit = defineEmits(['send'])
 
 const message = ref('')
 const textareaRef = ref(null)
+const fileUploadRef = ref(null)
+const fileIds = ref([])
 
 function handleKeydown(event) {
   if (event.key === 'Enter' && !event.shiftKey) {
@@ -41,9 +52,13 @@ function handleKeydown(event) {
 }
 
 function handleSend() {
-  if (message.value.trim()) {
-    emit('send', message.value)
+  if (message.value.trim() || fileIds.value.length > 0) {
+    emit('send', { 
+      text: message.value, 
+      fileIds: fileIds.value 
+    })
     message.value = ''
+    fileIds.value = []
     nextTick(() => {
       autoResize()
     })
@@ -67,7 +82,7 @@ function autoResize() {
   .input-group {
     display: flex;
     align-items: flex-end;
-    gap: 0.75rem;
+    gap: 0.5rem;
     background: hsl(var(--background-hue), var(--background-saturation), var(--background-lightness));
     border: 1px solid hsl(var(--border-hue), var(--border-saturation), var(--border-lightness));
     border-radius: 1.5rem;
@@ -133,6 +148,23 @@ function autoResize() {
     
     i {
       font-size: 0.875rem;
+    }
+  }
+  
+  .attach-button {
+    flex-shrink: 0;
+    border: none;
+    background: none;
+    color: hsl(var(--muted-foreground-hue), var(--muted-foreground-saturation), var(--muted-foreground-lightness));
+    padding: 0.25rem;
+    transition: color 0.2s ease;
+    
+    &:hover {
+      color: hsl(var(--foreground-hue), var(--foreground-saturation), var(--foreground-lightness));
+    }
+    
+    i {
+      font-size: 1.25rem;
     }
   }
 }

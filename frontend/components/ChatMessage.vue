@@ -25,6 +25,12 @@
       <div v-else class="message-text">
         <div v-if="type === 'assistant'" v-html="renderedMessage" class="markdown-content"></div>
         <div v-else>{{ message }}</div>
+        <div v-if="files && files.length > 0" class="message-files">
+          <div v-for="file in files" :key="file.id" class="file-attachment">
+            <i class="bi bi-paperclip"></i>
+            <span>{{ file.filename }}</span>
+          </div>
+        </div>
         <button 
           v-if="type === 'assistant' && message && status !== 'queued'"
           class="copy-button"
@@ -55,6 +61,10 @@ const props = defineProps({
   status: {
     type: String,
     default: 'finished'
+  },
+  files: {
+    type: Array,
+    default: () => []
   }
 })
 
@@ -367,6 +377,22 @@ async function copyMessage() {
     :deep(th) {
       background: hsl(var(--background-hue), var(--background-saturation), calc(var(--background-lightness) + 5%));
     }
+  }
+}
+
+.message-files {
+  margin-top: 0.5rem;
+}
+
+.file-attachment {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground-hue), var(--muted-foreground-saturation), var(--muted-foreground-lightness));
+  margin-right: 0.75rem;
+  
+  i {
+    margin-right: 0.25rem;
   }
 }
 </style>

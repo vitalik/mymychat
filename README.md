@@ -14,8 +14,8 @@
 - [x] **🔗 Chat Sharing** - Share conversations with others
 - [x] **🔑 Bring Your Own Key** - Use your own API keys
 - [x] **🔍 Web Search** - Integrate real-time web search
+- [x] **📎 Attachment Support** - Allow users to upload files (images and pdfs)
 - [ ] **🛠️ Custom tools** - Bring your own tools
-- [ ] **📎 Attachment Support** - Allow users to upload files (images and pdfs)
 - [ ] **🌳 Chat Branching** - Create alternative conversation paths
 - [ ] **🖼️ Image Generation Support** - AI-powered image generation capabilities
 

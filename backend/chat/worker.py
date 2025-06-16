@@ -7,6 +7,7 @@ from pydantic_ai import Agent
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.messages import ModelMessagesTypeAdapter
 from pydantic_ai.providers.openrouter import OpenRouterProvider
+from pydantic_ai import BinaryContent
 from chat.models import Prompt
 from chat.redis_pubsub import pubsub
 from llms.dummy import create_dummy_model
@@ -105,8 +106,19 @@ class LLMWorker:
 
             # print(history)
 
-            # 3) Process with pydantic-ai streaming -------------------------------------------------------------
-            async with agent.run_stream(prompt.input_text, message_history=history) as result:
+            # 3) Build prompt with files -----------------------------------------------------------------------
+            prompt_content = [prompt.input_text]
+            
+            # Add file attachments
+            async for file in prompt.files.all():
+                # Read file content
+                file_content = file.file.read()
+                prompt_content.append(
+                    BinaryContent(data=file_content, media_type=file.media_type)
+                )
+            
+            # 4) Process with pydantic-ai streaming -------------------------------------------------------------
+            async with agent.run_stream(prompt_content, message_history=history) as result:
                 async for chunk in result.stream_text(delta=True):
                     # Append each chunk to output_text
                     prompt.output_text += chunk
