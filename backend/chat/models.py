@@ -17,6 +17,7 @@ class Chat(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chats', null=True)
     is_shared = models.BooleanField(default=False)
     system_prompt = models.TextField(blank=True, default='')
+    tools = models.JSONField(default=list, blank=True)  # List of tool names or IDs
 
     class Meta:
         ordering = ['-timestamp']

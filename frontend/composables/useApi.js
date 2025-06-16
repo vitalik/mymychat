@@ -66,6 +66,14 @@ class Api {
     return await resp.json()
   }
 
+  async getTools() {
+    const resp = await fetch(`${this.baseURL}/tools`, {
+        method: 'GET',
+        headers: this.getAuthHeaders(),
+    })
+    return await resp.json()
+  }
+
   async login(email, password) {
     const resp = await fetch(`${this.baseURL}/auth/login`, {
         method: 'POST',

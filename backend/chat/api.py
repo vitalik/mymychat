@@ -35,6 +35,7 @@ class CreateChatSchema(Schema):
     input_text: str
     model: str
     system_prompt: str = ""
+    tools: list[str] = []
 
 
 class ChatResponseSchema(Schema):
@@ -57,7 +58,9 @@ def list_chats(request):
 def create_chat(request, data: CreateChatSchema):
     """Create a new chat with initial prompt."""
     headline = data.input_text[:50]
-    chat = Chat.objects.create(headline=headline, model=data.model, user=request.auth, system_prompt=data.system_prompt)
+    chat = Chat.objects.create(
+        headline=headline, model=data.model, user=request.auth, system_prompt=data.system_prompt, tools=data.tools
+    )
 
     Prompt.objects.create(chat=chat, input_text=data.input_text, status='queued')
 

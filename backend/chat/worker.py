@@ -10,6 +10,7 @@ from pydantic_ai.providers.openrouter import OpenRouterProvider
 from chat.models import Prompt
 from chat.redis_pubsub import pubsub
 from llms.dummy import create_dummy_model
+from llms.tools import available_tools
 from userprofile.utils import get_userprofile
 
 
@@ -47,6 +48,7 @@ class LLMWorker:
             chat_uid = prompt.chat.uid
             chat_model = prompt.chat.model
             chat_user = prompt.chat.user
+            chat_tools = prompt.chat.tools
 
             # Mark as running
             prompt.status = 'running'
@@ -68,14 +70,20 @@ class LLMWorker:
             if prompt.chat.system_prompt:
                 system_prompt = prompt.chat.system_prompt.text
 
+            # Tools
+            tools = []
+            for tool_name in chat_tools:
+                assert tool_name in available_tools, f"Tool '{tool_name}' not found in available tools"
+                tools.append(available_tools[tool_name]['callback'])
+
             # 1) Create appropriate agent based on provider --------------------------------------------------------
             if provider == 'dummy':
                 agent_model = create_dummy_model()
-                agent = Agent(model=agent_model, system_prompt=system_prompt)
+                agent = Agent(model=agent_model, system_prompt=system_prompt, tools=tools)
 
             elif provider == 'openai':
                 key = get_openai_key(user_profile)
-                agent = Agent(model=model_name, api_key=key, system_prompt=system_prompt)
+                agent = Agent(model=model_name, api_key=key, system_prompt=system_prompt, tools=tools)
 
             elif provider == 'openrouter':
                 key = get_openrouter_key(user_profile)
@@ -83,7 +91,7 @@ class LLMWorker:
                     model_name,
                     provider=OpenRouterProvider(api_key=user_profile.openrouter_key),
                 )
-                agent = Agent(model=agent_model, system_prompt=system_prompt)
+                agent = Agent(model=agent_model, system_prompt=system_prompt, tools=tools)
             else:
                 raise ValueError(f"Unknown provider: {provider}")
 

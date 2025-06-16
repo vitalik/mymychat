@@ -38,6 +38,10 @@
             </select>
           </div>
           
+          <div class="tool-selection mb-3">
+            <ToolSelector v-model="selectedTools" />
+          </div>
+          
           <textarea
             v-model="newMessage"
             class="form-control"
@@ -73,6 +77,7 @@ const providers = ref([])
 const systemPrompts = ref([])
 const selectedModel = ref(localStorage.getItem('selectedModel') || 'dummy:dummy')
 const selectedSystemPrompt = ref('')
+const selectedTools = ref([])
 
 onMounted(() => {
   loadChats()
@@ -131,7 +136,8 @@ async function createNewChat() {
     const response = await api.createChat({
       input_text: newMessage.value,
       model: selectedModel.value,
-      system_prompt: selectedSystemPrompt.value
+      system_prompt: selectedSystemPrompt.value,
+      tools: selectedTools.value
     })
     router.push(`/chats/${response.uid}`)
   } catch (error) {

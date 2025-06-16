@@ -13,7 +13,7 @@
 - [x] **🔄 Resumable Streams** - Continue generation after page refresh
 - [x] **🔗 Chat Sharing** - Share conversations with others
 - [x] **🔑 Bring Your Own Key** - Use your own API keys
-- [ ] **🔍 Web Search** - Integrate real-time web search
+- [x] **🔍 Web Search** - Integrate real-time web search
 - [ ] **🛠️ Custom tools** - Bring your own tools
 - [ ] **📎 Attachment Support** - Allow users to upload files (images and pdfs)
 - [ ] **🌳 Chat Branching** - Create alternative conversation paths
