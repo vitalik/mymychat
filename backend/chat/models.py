@@ -16,6 +16,7 @@ class Chat(models.Model):
     timestamp = models.DateTimeField(default=timezone.now)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chats', null=True)
     is_shared = models.BooleanField(default=False)
+    system_prompt = models.TextField(blank=True, default='')
 
     class Meta:
         ordering = ['-timestamp']

@@ -2,9 +2,12 @@ import asyncio
 import traceback
 from django.core.management.color import make_style
 from pydantic_ai import Agent
+from pydantic_ai.models.openai import OpenAIModel
+from pydantic_ai.providers.openrouter import OpenRouterProvider
 from chat.models import Prompt
 from chat.redis_pubsub import pubsub
 from llms.dummy import create_dummy_model
+from userprofile.utils import get_userprofile
 
 
 class LLMWorker:
@@ -36,10 +39,15 @@ class LLMWorker:
         try:
             # Access prompt data directly (since we're in async context)
             prompt_id = prompt.id
-            # Use select_related to fetch the chat in one query
-            prompt = await Prompt.objects.select_related('chat').aget(id=prompt_id)
+            # Use select_related to fetch the chat and user in one query
+            prompt = await Prompt.objects.select_related('chat__user').aget(id=prompt_id)
             chat_uid = prompt.chat.uid
             chat_model = prompt.chat.model
+            chat_user = prompt.chat.user
+
+            system_prompt = ()  # empty
+            if prompt.chat.system_prompt:
+                system_prompt = prompt.chat.system_prompt.text
 
             # Mark as running
             prompt.status = 'running'
@@ -50,12 +58,32 @@ class LLMWorker:
 
             self.log(f'Processing prompt {prompt_id} for chat {chat_uid} using model {chat_model}')
 
-            # Create appropriate model based on chat.model
-            if chat_model == 'dummy':
-                model = create_dummy_model()
-                agent = Agent(model=model)
+            # Get user profile for API keys
+            user_profile = await get_userprofile(chat_user)
+
+            # Parse provider and model
+            provider, model_name = chat_model.split(':', 1)
+
+            # Create appropriate agent based on provider
+            if provider == 'dummy':
+                agent_model = create_dummy_model()
+                agent = Agent(model=agent_model, system_prompt=system_prompt)
+            elif provider == 'openai':
+                if user_profile.openai_key:
+                    agent = Agent(model=model_name, api_key=user_profile.openai_key, system_prompt=system_prompt)
+                else:
+                    raise ValueError("OpenAI API key not configured")
+            elif provider == 'openrouter':
+                if user_profile.openrouter_key:
+                    agent_model = OpenAIModel(
+                        model_name,
+                        provider=OpenRouterProvider(api_key=user_profile.openrouter_key),
+                    )
+                    agent = Agent(model=agent_model, system_prompt=system_prompt)
+                else:
+                    raise ValueError("OpenRouter API key not configured")
             else:
-                agent = Agent(model=chat_model)
+                raise ValueError(f"Unknown provider: {provider}")
 
             # Process with pydantic-ai streaming
             async with agent.run_stream(prompt.input_text) as result:

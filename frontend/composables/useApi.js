@@ -129,6 +129,57 @@ class Api {
     return await resp.json()
   }
 
+  async getProfile() {
+    const resp = await fetch(`${this.baseURL}/profile`, {
+        method: 'GET',
+        headers: this.getAuthHeaders(),
+    })
+    return await resp.json()
+  }
+
+  async updateProfile(data) {
+    const resp = await fetch(`${this.baseURL}/profile`, {
+        method: 'PATCH',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify(data)
+    })
+    return await resp.json()
+  }
+
+  async getSystemPrompts() {
+    const resp = await fetch(`${this.baseURL}/system-prompts`, {
+        method: 'GET',
+        headers: this.getAuthHeaders(),
+    })
+    return await resp.json()
+  }
+
+  async createSystemPrompt(data) {
+    const resp = await fetch(`${this.baseURL}/system-prompts`, {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify(data)
+    })
+    return await resp.json()
+  }
+
+  async updateSystemPrompt(id, data) {
+    const resp = await fetch(`${this.baseURL}/system-prompts/${id}`, {
+        method: 'PUT',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify(data)
+    })
+    return await resp.json()
+  }
+
+  async deleteSystemPrompt(id) {
+    const resp = await fetch(`${this.baseURL}/system-prompts/${id}`, {
+        method: 'DELETE',
+        headers: this.getAuthHeaders(),
+    })
+    return await resp.json()
+  }
+
   logout() {
     localStorage.removeItem('auth_token')
   }

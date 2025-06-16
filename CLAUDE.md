@@ -61,7 +61,7 @@ npm run dev
 
 ### Key Files
 - **Backend Models**: `chat/models.py` (Chat, Prompt)
-- **API Endpoints**: `backend/api.py` 
+- **API Endpoints**: `backend/api/main.py` 
 - **LLM Worker**: `chat/worker.py` (processes prompts with pydantic-ai)
 - **LLM Models**: `llms/dummy.py` (dummy model implementation)
 - **Frontend API**: `composables/useApi.js`

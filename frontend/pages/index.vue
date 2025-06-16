@@ -12,16 +12,27 @@
         <p>Start a new conversation</p>
         <div class="new-chat-form">
           <div class="model-selection mb-3">
-            <label for="model-select" class="form-label">
+            <label class="form-label">
               <i class="bi bi-cpu me-2"></i>Choose Model
             </label>
-            <select 
-              id="model-select"
+            <ModelSelector 
               v-model="selectedModel" 
+              :providers="providers"
+            />
+          </div>
+          
+          <div class="system-prompt-selection mb-3">
+            <label for="system-prompt-select" class="form-label">
+              <i class="bi bi-chat-quote me-2"></i>System Prompt (Optional)
+            </label>
+            <select 
+              id="system-prompt-select"
+              v-model="selectedSystemPrompt" 
               class="form-select"
             >
-              <option v-for="model in models" :key="model.id" :value="model.id">
-                {{ model.name }} - {{ model.description }}
+              <option value="">None</option>
+              <option v-for="prompt in systemPrompts" :key="prompt.id" :value="prompt.text">
+                {{ prompt.text.substring(0, 50) }}{{ prompt.text.length > 50 ? '...' : '' }}
               </option>
             </select>
           </div>
@@ -57,12 +68,15 @@ const router = useRouter()
 
 const chats = ref([])
 const newMessage = ref('')
-const models = ref([])
-const selectedModel = ref('dummy')
+const providers = ref([])
+const systemPrompts = ref([])
+const selectedModel = ref('dummy:dummy')
+const selectedSystemPrompt = ref('')
 
 onMounted(() => {
   loadChats()
   loadModels()
+  loadSystemPrompts()
 })
 
 async function loadChats() {
@@ -77,12 +91,21 @@ async function loadChats() {
 async function loadModels() {
   try {
     const response = await api.getModels()
-    models.value = response.models
-    if (models.value.length > 0) {
-      selectedModel.value = models.value[0].id
+    providers.value = response
+    if (providers.value.length > 0 && providers.value[0].models.length > 0) {
+      selectedModel.value = providers.value[0].models[0].id
     }
   } catch (error) {
     $toast.error('Failed to load models')
+  }
+}
+
+async function loadSystemPrompts() {
+  try {
+    const response = await api.getSystemPrompts()
+    systemPrompts.value = response
+  } catch (error) {
+    $toast.error('Failed to load system prompts')
   }
 }
 
@@ -100,7 +123,8 @@ async function createNewChat() {
   try {
     const response = await api.createChat({
       input_text: newMessage.value,
-      model: selectedModel.value
+      model: selectedModel.value,
+      system_prompt: selectedSystemPrompt.value
     })
     router.push(`/chats/${response.uid}`)
   } catch (error) {
@@ -149,7 +173,7 @@ async function createNewChat() {
   max-width: 600px;
 }
 
-.model-selection {
+.model-selection, .system-prompt-selection {
   text-align: left;
   
   .form-label {

@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'chat.apps.ChatConfig',  # sigterm is defined in config
+    'userprofile',
 ]
 
 MIDDLEWARE = [

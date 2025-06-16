@@ -3,7 +3,10 @@
     <div class="sidebar-header">
       <h5><i class="bi bi-chat-dots-fill me-2"></i>MyMyChat</h5>
       <div class="header-actions">
-        <button class="btn btn-sm theme-toggle" @click="toggleTheme" :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
+        <nuxt-link to="/settings" class="btn btn-sm theme-toggle" title="Settings">
+          <i class="bi bi-gear-fill"></i>
+        </nuxt-link>
+        <button class="btn btn-sm theme-toggle ms-1" @click="toggleTheme" :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
           <i :class="isDark ? 'bi bi-sun-fill' : 'bi bi-moon-fill'"></i>
         </button>
         <button class="btn btn-sm btn-primary ms-2" @click="$emit('new-chat')">
