@@ -18,6 +18,7 @@
             <ModelSelector 
               v-model="selectedModel" 
               :providers="providers"
+              @update:modelValue="saveSelectedModel"
             />
           </div>
           
@@ -70,14 +71,18 @@ const chats = ref([])
 const newMessage = ref('')
 const providers = ref([])
 const systemPrompts = ref([])
-const selectedModel = ref('dummy:dummy')
+const selectedModel = ref(localStorage.getItem('selectedModel') || 'dummy:dummy')
 const selectedSystemPrompt = ref('')
 
 onMounted(() => {
   loadChats()
-  loadModels()
   loadSystemPrompts()
+  loadModels()
 })
+
+function saveSelectedModel() {
+  localStorage.setItem('selectedModel', selectedModel.value)
+}
 
 async function loadChats() {
   try {
@@ -92,8 +97,10 @@ async function loadModels() {
   try {
     const response = await api.getModels()
     providers.value = response
-    if (providers.value.length > 0 && providers.value[0].models.length > 0) {
-      selectedModel.value = providers.value[0].models[0].id
+    
+    // Only set default if no saved model and current is still default
+    if (selectedModel.value === 'dummy:dummy' && providers.value.length > 0 && providers.value[0].models.length > 0) {
+      selectedModel.value = providers.value[0].models[0].id  
     }
   } catch (error) {
     $toast.error('Failed to load models')

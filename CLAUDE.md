@@ -25,6 +25,7 @@ Users can create chats, select from multiple LLM models, and receive real-time s
 - **Icons**: Bootstrap Icons throughout the UI
 - **API Integration**: Custom composable (`useApi.js`) with singleton pattern
 - **Notifications**: Vue Toastification for user feedback
+- **Note**: We do not use SSR - all frontend is on client side
 
 #### Frontend Structure:
 - `app.vue`: Root component with global theme management
