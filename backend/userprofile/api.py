@@ -1,8 +1,7 @@
 from ninja import Router, Schema, ModelSchema
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import User
-from userprofile.models import UserProfile, SystemPrompt
-from userprofile.utils import get_userprofile, get_userprofile_sync
+from userprofile.models import SystemPrompt
+from userprofile.utils import get_userprofile_sync
 
 
 router = Router()

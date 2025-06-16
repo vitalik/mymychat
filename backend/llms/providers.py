@@ -1,5 +1,4 @@
 import httpx
-from typing import Optional
 from utils.cache import cache
 
 
