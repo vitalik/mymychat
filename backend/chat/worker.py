@@ -1,3 +1,4 @@
+import os
 import asyncio
 import traceback
 from django.core.management.color import make_style
@@ -69,19 +70,15 @@ class LLMWorker:
                 agent_model = create_dummy_model()
                 agent = Agent(model=agent_model, system_prompt=system_prompt)
             elif provider == 'openai':
-                if user_profile.openai_key:
-                    agent = Agent(model=model_name, api_key=user_profile.openai_key, system_prompt=system_prompt)
-                else:
-                    raise ValueError("OpenAI API key not configured")
+                key = get_openai_key(user_profile)
+                agent = Agent(model=model_name, api_key=key, system_prompt=system_prompt)
             elif provider == 'openrouter':
-                if user_profile.openrouter_key:
-                    agent_model = OpenAIModel(
-                        model_name,
-                        provider=OpenRouterProvider(api_key=user_profile.openrouter_key),
-                    )
-                    agent = Agent(model=agent_model, system_prompt=system_prompt)
-                else:
-                    raise ValueError("OpenRouter API key not configured")
+                key = get_openrouter_key(user_profile)
+                agent_model = OpenAIModel(
+                    model_name,
+                    provider=OpenRouterProvider(api_key=user_profile.openrouter_key),
+                )
+                agent = Agent(model=agent_model, system_prompt=system_prompt)
             else:
                 raise ValueError(f"Unknown provider: {provider}")
 
@@ -89,10 +86,7 @@ class LLMWorker:
             async with agent.run_stream(prompt.input_text) as result:
                 async for message in result.stream_text(delta=True):
                     # Append each chunk to output_text
-                    if prompt.output_text:
-                        prompt.output_text += message
-                    else:
-                        prompt.output_text = message
+                    prompt.output_text += message
                     await prompt.asave()
 
                     # Publish chunk to Redis
@@ -113,6 +107,8 @@ class LLMWorker:
             self.log(traceback.format_exc(), 'ERROR')
 
             # Mark as failed
+            prompt.output_text += traceback.format_exc()
+            # TODO: ^ this not really nice - but let's keep it simple for now
             prompt.status = 'finished'
             prompt.result = 'failure'
             await prompt.asave()
@@ -129,3 +125,21 @@ class LLMWorker:
             print(self.style.WARNING(message))
         else:
             print(message)
+
+
+def get_openrouter_key(profile) -> str:
+    if profile.openrouter_key:
+        return profile.openrouter_key
+    try:
+        return os.environ['OPENROUTER_API_KEY']
+    except KeyError:
+        raise ValueError("OpenRouter API key not configured in user profile or environment variables") from None
+
+
+def get_openai_key(profile) -> str:
+    if profile.openai_key:
+        return profile.openai_key
+    try:
+        return os.environ['OPENAI_API_KEY']
+    except KeyError:
+        raise ValueError("OpenAI API key not configured in user profile or environment variables") from None

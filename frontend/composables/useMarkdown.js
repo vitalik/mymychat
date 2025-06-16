@@ -7,11 +7,11 @@ import 'highlight.js/styles/atom-one-dark.css'
 marked.use(markedHighlight({
   langPrefix: 'hljs language-',
   highlight(code, lang) {
-    console.log('Highlighting code with language:', lang)
+    // console.log('Highlighting code with language:', lang)
     
     const language = hljs.getLanguage(lang) ? lang : 'plaintext'
     const result = hljs.highlight(code, { language }).value
-    console.log('Highlighted result:', result.substring(0, 100))
+    // console.log('Highlighted result:', result.substring(0, 100))
     return result
   }
 }))
@@ -28,7 +28,7 @@ export const useMarkdown = () => {
     
     try {
       let result = marked.parse(markdown)
-      console.log('Markdown parsed, result length:', result.length)
+      // console.log('Markdown parsed, result length:', result.length)
       
       // If we need to append typing indicator, add it to the last text element
       if (options.appendTypingIndicator) {
