@@ -3,11 +3,11 @@ import redis.asyncio as redis
 from django.conf import settings
 
 
-class RedisClient:
+class RedisPubSub:
     """Redis client for pub/sub streaming functionality."""
 
     def __init__(self):
-        self.redis_url = getattr(settings, 'REDIS_URL', 'redis://localhost:6379')
+        self.redis_url = settings.REDIS_URL
         self._connection = None
 
     async def get_connection(self):
@@ -64,5 +64,4 @@ class RedisClient:
             await self._connection.close()
 
 
-# Global Redis client instance
-redis_client = RedisClient()
+pubsub = RedisPubSub()

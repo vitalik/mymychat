@@ -1,9 +1,10 @@
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent
 
-SECRET_KEY = 'django-insecure-3=_ii)nv@r8v^cj1byi+_88mlpbgym)w6!g@t7#8hy(31lx*=6'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-3=_ii)nv@r8v^cj1byi+_88mlpbgym)w6!g@t7#8hy(31lx*=6')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -33,7 +34,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'backend.urls'
+ROOT_URLCONF = 'urls'
 
 TEMPLATES = [
     {
@@ -50,13 +51,13 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'backend.wsgi.application'
+# WSGI_APPLICATION = 'wsgi.application'
 
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / '../files/db.sqlite3',
     }
 }
 
@@ -90,9 +91,14 @@ USE_TZ = False
 
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'static'
+STATIC_ROOT = BASE_DIR / '../static'
+
+MEDIA_ROOT = BASE_DIR / '../files/media'
+MEDIA_URL = '/media/'
 
 # Allow all hosts in Docker
 ALLOWED_HOSTS = ['*']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379')

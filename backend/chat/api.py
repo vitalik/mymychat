@@ -4,7 +4,7 @@ from ninja import Router, Schema, ModelSchema
 from django.shortcuts import get_object_or_404, aget_object_or_404
 from django.http import StreamingHttpResponse
 from chat.models import Chat, Prompt
-from chat.redis_client import redis_client
+from chat.redis_pubsub import pubsub
 from auth.auth import query_token_auth
 
 
@@ -108,7 +108,7 @@ async def chat_stream(request, uid: str):
             yield f"data: {json.dumps({'type': 'connected', 'chat_uid': uid})}\n\n"
 
             # Subscribe to Redis channel and yield events
-            async for message in redis_client.subscribe_to_chat(uid):
+            async for message in pubsub.subscribe_to_chat(uid):
                 # Format as SSE event
                 event_data = json.dumps(message)
                 yield f"data: {event_data}\n\n"

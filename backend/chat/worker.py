@@ -3,7 +3,7 @@ import traceback
 from django.core.management.color import make_style
 from pydantic_ai import Agent
 from chat.models import Prompt
-from chat.redis_client import redis_client
+from chat.redis_pubsub import pubsub
 from llms.dummy import create_dummy_model
 
 
@@ -46,7 +46,7 @@ class LLMWorker:
             await prompt.asave()
 
             # Publish status update
-            await redis_client.publish_status(chat_uid, prompt_id, 'running')
+            await pubsub.publish_status(chat_uid, prompt_id, 'running')
 
             self.log(f'Processing prompt {prompt_id} for chat {chat_uid} using model {chat_model}')
 
@@ -68,7 +68,7 @@ class LLMWorker:
                     await prompt.asave()
 
                     # Publish chunk to Redis
-                    await redis_client.publish_chunk(chat_uid, prompt_id, message)
+                    await pubsub.publish_chunk(chat_uid, prompt_id, message)
 
             # Mark as finished
             prompt.status = 'finished'
@@ -76,7 +76,7 @@ class LLMWorker:
             await prompt.asave()
 
             # Publish completion status
-            await redis_client.publish_status(chat_uid, prompt_id, 'finished')
+            await pubsub.publish_status(chat_uid, prompt_id, 'finished')
 
             self.log(f'Completed prompt {prompt_id}', 'SUCCESS')
 

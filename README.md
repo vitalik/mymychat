@@ -62,7 +62,7 @@ npm install
 ```bash
 # Terminal 1: Backend API
 cd backend
-uvicorn backend.asgi:application --reload
+uvicorn asgi:application --reload
 
 # Terminal 2: LLM Worker
 cd backend

@@ -3,7 +3,7 @@ from chat.api import router as chat_router
 from auth.auth import jwt_bearer_auth
 from auth.api import router as auth_router
 
-# Create the main API instance with global JWT authentication
+
 api = NinjaAPI(auth=jwt_bearer_auth)
 
 

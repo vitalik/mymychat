@@ -1,0 +1,33 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: [self-hosted, us-west]
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Build
+      run: |
+        docker build -t mymychat:latest .
+        echo "Docker image built successfully!"
+    
+    - name: Prep
+      run: |
+        mkdir -p /home/ubuntu/mymychat
+        cp docker-compose.yml /home/ubuntu/mymychat/
+    
+    - name: Start
+      run: |
+        cd /home/ubuntu/mymychat
+        docker compose up -d
+        
+        echo "Deployment completed successfully!"
+        echo "Services status:"
+        docker compose ps

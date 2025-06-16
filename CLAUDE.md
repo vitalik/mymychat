@@ -48,7 +48,7 @@ These are started by user:
 ```bash
 # Backend (Terminal 1)
 cd backend
-uvicorn backend.asgi:application --reload
+uvicorn asgi:application --reload
 
 # LLM Worker (Terminal 2) 
 cd backend
