@@ -1,5 +1,8 @@
 # MyMyChat 💬
 
+<img width="1006" alt="SCR-20250617-pgpl" src="https://github.com/user-attachments/assets/71d06763-eecd-45d6-a566-d5ad77dfc225" />
+
+
 > A modern, feature-rich ChatGPT clone built for the [T3 Chat Cloneathon](https://cloneathon.t3.chat/) competition.
 
 ## 🚀 Live Demo
