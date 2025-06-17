@@ -21,11 +21,11 @@ class ChatListSchema(ModelSchema):
 
 class FileSchema(ModelSchema):
     filename: str
-    
+
     class Meta:
         model = File
         fields = ['id', 'media_type']
-    
+
     @staticmethod
     def resolve_filename(obj):
         return os.path.basename(obj.file.name)
@@ -33,11 +33,11 @@ class FileSchema(ModelSchema):
 
 class PromptSchema(ModelSchema):
     files: list[FileSchema] = []
-    
+
     class Meta:
         model = Prompt
         fields = ['id', 'status', 'result', 'input_text', 'output_text', 'created', 'modified']
-    
+
     @staticmethod
     def resolve_files(obj):
         return list(obj.files.all())
@@ -85,7 +85,7 @@ def create_chat(request, data: CreateChatSchema):
     )
 
     prompt = Prompt.objects.create(chat=chat, input_text=data.input_text, status='queued')
-    
+
     # Add files if provided
     if data.file_ids:
         files = File.objects.filter(id__in=data.file_ids, user=request.auth)
@@ -106,12 +106,12 @@ def new_prompt(request, uid: str, data: CreatePromptSchema):
     """Add a new prompt to an existing chat."""
     chat = get_object_or_404(Chat, uid=uid, user=request.auth)
     prompt = Prompt.objects.create(chat=chat, input_text=data.input_text, status='queued')
-    
+
     # Add files if provided
     if data.file_ids:
         files = File.objects.filter(id__in=data.file_ids, user=request.auth)
         prompt.files.set(files)
-    
+
     return {"id": prompt.id, "status": prompt.status}
 
 
@@ -179,15 +179,8 @@ def upload_file(request, file: UploadedFile):
     """Upload a file and return its ID."""
     # Get media type from content_type
     media_type = file.content_type or 'application/octet-stream'
-    
+
     # Create File object
-    file_obj = File.objects.create(
-        user=request.auth,
-        file=file,
-        media_type=media_type
-    )
-    
-    return {
-        "id": file_obj.id,
-        "filename": file.name
-    }
+    file_obj = File.objects.create(user=request.auth, file=file, media_type=media_type)
+
+    return {"id": file_obj.id, "filename": file.name}

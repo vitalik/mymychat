@@ -108,15 +108,13 @@ class LLMWorker:
 
             # 3) Build prompt with files -----------------------------------------------------------------------
             prompt_content = [prompt.input_text]
-            
+
             # Add file attachments
             async for file in prompt.files.all():
                 # Read file content
                 file_content = file.file.read()
-                prompt_content.append(
-                    BinaryContent(data=file_content, media_type=file.media_type)
-                )
-            
+                prompt_content.append(BinaryContent(data=file_content, media_type=file.media_type))
+
             # 4) Process with pydantic-ai streaming -------------------------------------------------------------
             async with agent.run_stream(prompt_content, message_history=history) as result:
                 async for chunk in result.stream_text(delta=True):
