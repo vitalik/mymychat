@@ -19,21 +19,24 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { store } from '~/stores/chatStore'
 
 const { $toast } = useNuxtApp()
 const api = useApi()
 const route = useRoute()
 const router = useRouter()
 
-const chats = ref([])
+// Use computed property for chats from store
+const chats = computed(() => store.chats)
 const activeChat = ref(null)
 const eventSource = ref(null)
 const lastPromptId = ref(null)
 
 onMounted(() => {
-  loadChats()
+  // Load chats from store (won't cause empty flash)
+  store.loadChats()
   if (route.params.uid) {
     loadChat(route.params.uid)
   }
@@ -52,14 +55,6 @@ onUnmounted(() => {
   closeSSEConnection()
 })
 
-async function loadChats() {
-  try {
-    const response = await api.getChats()
-    chats.value = response
-  } catch (error) {
-    $toast.error('Failed to load chats')
-  }
-}
 
 async function loadChat(uid) {
   try {
@@ -190,6 +185,9 @@ async function sendMessage(data) {
     
     await api.createPrompt(activeChat.value.uid, payload)
     // SSE will handle real-time updates, no need to manually reload
+    
+    // Refresh chats list in store (in background)
+    store.loadChats()
   } catch (error) {
     $toast.error('Failed to send message')
   }

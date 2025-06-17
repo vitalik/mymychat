@@ -71,63 +71,46 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { store } from '~/stores/chatStore'
 
 const { $toast } = useNuxtApp()
 const api = useApi()
 const router = useRouter()
 
-const chats = ref([])
 const newMessage = ref('')
-const providers = ref([])
-const systemPrompts = ref([])
 const selectedModel = ref(localStorage.getItem('selectedModel') || 'dummy:dummy')
 const selectedSystemPrompt = ref('')
 const selectedTools = ref([])
 const selectedFileIds = ref([])
 
-onMounted(() => {
-  loadChats()
-  loadSystemPrompts()
-  loadModels()
+// Use computed properties to access store data
+const chats = computed(() => store.chats)
+const systemPrompts = computed(() => store.systemPrompts)
+const providers = computed(() => {
+  // The API already returns providers in the correct structure
+  return store.models
+})
+
+onMounted(async () => {
+  // Load all data from store
+  await store.loadAll()
+  
+  // Set default model if needed after loading
+  if (selectedModel.value === 'dummy:dummy' && providers.value.length > 0) {
+    const firstProvider = providers.value[0]
+    if (firstProvider && firstProvider.models && firstProvider.models.length > 0) {
+      selectedModel.value = firstProvider.models[0].id
+      saveSelectedModel()
+    }
+  }
 })
 
 function saveSelectedModel() {
   localStorage.setItem('selectedModel', selectedModel.value)
 }
 
-async function loadChats() {
-  try {
-    const response = await api.getChats()
-    chats.value = response
-  } catch (error) {
-    $toast.error('Failed to load chats')
-  }
-}
-
-async function loadModels() {
-  try {
-    const response = await api.getModels()
-    providers.value = response
-    
-    // Only set default if no saved model and current is still default
-    if (selectedModel.value === 'dummy:dummy' && providers.value.length > 0 && providers.value[0].models.length > 0) {
-      selectedModel.value = providers.value[0].models[0].id  
-    }
-  } catch (error) {
-    $toast.error('Failed to load models')
-  }
-}
-
-async function loadSystemPrompts() {
-  try {
-    const response = await api.getSystemPrompts()
-    systemPrompts.value = response
-  } catch (error) {
-    $toast.error('Failed to load system prompts')
-  }
-}
 
 async function selectChat(chatUid) {
   router.push(`/chats/${chatUid}`)
