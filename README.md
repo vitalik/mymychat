@@ -20,7 +20,8 @@ A modern, feature-rich ChatGPT clone built for the [T3 Chat Cloneathon](https://
 - [x] **🔑 Bring Your Own Key** - Use your own API keys
 - [x] **🔍 Web Search** - Integrate real-time web search
 - [x] **📎 Attachment Support** - Allow users to upload files (images and pdfs)
-- [ ] **🛠️ Custom tools** - Bring your own tools
+- ▶️ **🛠️ Custom tools** - Bring your own tools
+- ▶️ **🛠️ MCP** - Connect to MCP servers
 - [ ] **🌳 Chat Branching** - Create alternative conversation paths
 - [ ] **🖼️ Image Generation Support** - AI-powered image generation capabilities
 
@@ -28,7 +29,18 @@ A modern, feature-rich ChatGPT clone built for the [T3 Chat Cloneathon](https://
 
 ## 🏃‍♂️ Quick Start
 
-[ TODO ]
+Get MyMyChat running in seconds with these two simple commands:
+
+```bash
+curl -o docker-compose.yml https://raw.githubusercontent.com/vitalik/mymychat/main/docker-compose.yml
+docker compose up -d
+```
+
+That's it! Visit `http://localhost` to start chatting.
+
+**Requirements:**
+- Docker and Docker Compose installed
+- (optional) Set `OPENAI_API_KEY` environment variable or add it to a `.env` file
 
 
 ### Stack
