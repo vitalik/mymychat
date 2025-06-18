@@ -38,9 +38,7 @@ docker compose up -d
 
 That's it! Visit `http://localhost` to start chatting.
 
-**Requirements:**
-- Docker and Docker Compose installed
-- (optional) Set `OPENAI_API_KEY` environment variable or add it to a `.env` file
+(optional) Set `OPENAI_API_KEY` environment variable or add it to a `.env` file
 
 
 ### Stack
