@@ -13,7 +13,7 @@ services:
       - REDIS_URL=redis://redis:6379
     command: sh -c "python manage.py migrate --no-input && uvicorn asgi:application --host 0.0.0.0 --port 8000"
     ports:
-      - "80:8000"
+      - "8000:8000"
 
   worker_llm:
     <<: *common

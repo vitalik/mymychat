@@ -36,7 +36,7 @@ curl -o docker-compose.yml https://raw.githubusercontent.com/vitalik/mymychat/ma
 docker compose up -d
 ```
 
-That's it! Visit `http://localhost` to start chatting.
+That's it! Visit `http://localhost:8000/` to start chatting.
 
 (optional) Set `OPENAI_API_KEY` environment variable or add it to a `.env` file
 
