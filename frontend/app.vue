@@ -42,6 +42,12 @@ onMounted(async () => {
 async function checkAuthentication() {
   const authPages = ['/login', '/register']
   const isAuthPage = authPages.includes(route.path)
+  const isSharedPage = route.path.startsWith('/shared/')
+  
+  // Skip auth check for shared pages
+  if (isSharedPage) {
+    return
+  }
   
   try {
     const authResult = await api.checkAuth()
