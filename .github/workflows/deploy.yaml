@@ -78,12 +78,12 @@ jobs:
     - name: Create and push manifest
       run: |
         docker manifest create vital1k/mymychat:latest \
-          vital1k/mymychat:latest-amd64 \
-          vital1k/mymychat:latest-arm64
+          --amend vital1k/mymychat:latest-amd64 \
+          --amend vital1k/mymychat:latest-arm64
         
         docker manifest create vital1k/mymychat:${{ github.sha }} \
-          vital1k/mymychat:latest-amd64 \
-          vital1k/mymychat:latest-arm64
+          --amend vital1k/mymychat:latest-amd64 \
+          --amend vital1k/mymychat:latest-arm64
         
         docker manifest push vital1k/mymychat:latest
         docker manifest push vital1k/mymychat:${{ github.sha }}
