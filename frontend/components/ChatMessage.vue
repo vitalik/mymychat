@@ -106,10 +106,7 @@ async function copyMessage() {
   
   &.message-user {
     flex-direction: row-reverse;
-    
-    .message-content {
-      text-align: right;
-    }
+    justify-content: flex-start;
   }
 }
 
@@ -140,10 +137,13 @@ async function copyMessage() {
   position: relative;
   
   .message-user & {
+    flex: 0 1 auto;
+    max-width: 75%;
     background: hsl(var(--primary-hue), var(--primary-saturation), var(--primary-lightness));
     color: white;
     padding: 0.45rem 0.6rem;  // More compact padding
     border-radius: 0.5rem 0.5rem 0.25rem 0.5rem;  // More compact border radius
+    display: inline-block;
   }
   
   .message-assistant & {

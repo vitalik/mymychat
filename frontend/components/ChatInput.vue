@@ -15,6 +15,7 @@
           ref="textareaRef"
           v-model="message"
           class="form-control"
+          style="min-height: 40px;"
           placeholder="Type your message..."
           rows="1"
           @keydown="handleKeydown"
@@ -132,7 +133,7 @@ function autoResize() {
     background: hsl(var(--primary-hue), var(--primary-saturation), var(--primary-lightness));
     color: white;
     padding: 0.5rem 1rem;
-    border-radius: 1rem;
+    border-radius: 1rem !important;
     display: flex;
     align-items: center;
     justify-content: center;
