@@ -82,15 +82,16 @@ async function shareChat() {
 
 <style lang="scss" scoped>
 .chat-conversation {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  min-height: 100%;
+  max-width: 1000px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .messages-container {
   flex: 1;
-  overflow-y: auto;
   padding: 2rem;
   background: hsl(var(--chat-bg-hue), var(--chat-bg-saturation), var(--chat-bg-lightness));
   transition: background-color 0.3s ease;
@@ -102,10 +103,10 @@ async function shareChat() {
 
 .chat-actions {
   padding: 1rem 2rem;
-  border-top: 1px solid hsl(var(--border-hue), var(--border-saturation), var(--border-lightness));
-  background: hsl(var(--background-hue), var(--background-saturation), var(--background-lightness));
+  background: hsl(var(--chat-bg-hue), var(--chat-bg-saturation), var(--chat-bg-lightness));
   display: flex;
   justify-content: center;
+  transition: background-color 0.3s ease;
 }
 
 .btn {

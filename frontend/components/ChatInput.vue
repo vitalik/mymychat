@@ -75,6 +75,12 @@ function autoResize() {
 </script>
 
 <style lang="scss" scoped>
+.chat-input-container {
+  padding: 1rem 2rem;
+  background: hsl(var(--chat-bg-hue), var(--chat-bg-saturation), var(--chat-bg-lightness));
+  transition: background-color 0.3s ease;
+}
+
 .chat-input-wrapper {
   max-width: 800px;
   margin: 0 auto;
@@ -83,19 +89,15 @@ function autoResize() {
     display: flex;
     align-items: flex-end;
     gap: 0.5rem;
-    background: hsl(var(--background-hue), var(--background-saturation), var(--background-lightness));
-    border: 1px solid hsl(var(--border-hue), var(--border-saturation), var(--border-lightness));
+    background: hsl(var(--chat-bg-hue), var(--chat-bg-saturation), var(--chat-bg-lightness));
+    border: none;
     border-radius: 1.5rem;
     padding: 0.75rem 1rem;
     transition: all 0.3s ease;
+    box-shadow: 0 0 0 1px hsl(var(--border-hue), var(--border-saturation), var(--border-lightness));
     
     &:focus-within {
-      border-color: hsl(var(--primary-hue), var(--primary-saturation), var(--primary-lightness));
-      box-shadow: 0 0 0 0.2rem hsl(var(--primary-hue) var(--primary-saturation) var(--primary-lightness) / 0.1);
-    }
-    
-    [data-theme="dark"] & {
-      background: hsl(var(--background-hue), var(--background-saturation), calc(var(--background-lightness) + 5%));
+      box-shadow: 0 0 0 2px hsl(var(--primary-hue), var(--primary-saturation), var(--primary-lightness));
     }
   }
   

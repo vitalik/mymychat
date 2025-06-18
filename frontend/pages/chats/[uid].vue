@@ -7,13 +7,11 @@
       @new-chat="startNewChat"
     />
     <div class="chat-main">
-      <div class="chat-container">
-        <ChatConversation 
-          v-if="activeChat"
-          :chat="activeChat"
-          @send-message="sendMessage"
-        />
-      </div>
+      <ChatConversation 
+        v-if="activeChat"
+        :chat="activeChat"
+        @send-message="sendMessage"
+      />
     </div>
   </div>
 </template>
@@ -207,12 +205,7 @@ async function sendMessage(data) {
   flex-direction: column;
   background: hsl(var(--chat-bg-hue), var(--chat-bg-saturation), var(--chat-bg-lightness));
   transition: background-color 0.3s ease;
-}
-
-.chat-container {
-  max-width: 1000px;
-  width: 100%;
-  margin: 0 auto;
-  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 </style>
