@@ -34,8 +34,8 @@ jobs:
         tags: |
           vital1k/mymychat:latest
           vital1k/mymychat:${{ github.sha }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+        # cache-from: type=gha
+        # cache-to: type=gha,mode=max
     
     - name: Build local image for deployment
       run: |
