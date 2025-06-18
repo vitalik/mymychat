@@ -1,5 +1,5 @@
 x-common: &common
-  image: mymychat:latest
+  image: vital1k/mymychat:latest
   restart: unless-stopped
   volumes:
       - ./data/files:/app/files
