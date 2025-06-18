@@ -240,25 +240,47 @@ async function copyMessage() {
   :deep(h6) { font-size: 0.75rem; }
   
   :deep(p) {
-    margin: 0.5rem 0;
+    margin: 0 !important;
+    padding: 0 !important;
     line-height: 1.4;
     
-    &:first-child {
-      margin-top: 0;
-    }
-    
-    &:last-child {
-      margin-bottom: 0;
+    & + p {
+      margin-top: 0.5rem !important;
     }
   }
   
   :deep(ul), :deep(ol) {
-    margin: 0.5rem 0;
-    padding-left: 1.5rem;
+    margin: 0 !important;
+    padding: 0 !important;
+    padding-left: 1.25rem !important;
+    list-style-position: outside;
+    
+    & + p {
+      margin-top: 0.5rem !important;
+    }
     
     li {
-      margin: 0.25rem 0;
-      line-height: 1.4;
+      margin: 0 !important;
+      padding: 0 !important;
+      line-height: 0.8rem !important;
+      
+      & + li {
+        margin-top: 0.25rem !important;
+      }
+      
+      p {
+        margin: 0 !important;
+        padding: 0 !important;
+        
+        &:first-child {
+          display: inline;
+        }
+      }
+      
+      ul, ol {
+        margin-top: 0.25rem !important;
+        margin-bottom: 0 !important;
+      }
     }
   }
   
