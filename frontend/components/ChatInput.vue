@@ -166,6 +166,11 @@ function autoResize() {
       color: hsl(var(--foreground-hue), var(--foreground-saturation), var(--foreground-lightness));
     }
     
+    // Dark theme - make icon brighter
+    [data-theme="dark"] & {
+      color: hsl(var(--foreground-hue), var(--foreground-saturation), calc(var(--foreground-lightness) - 30%));
+    }
+    
     i {
       font-size: 1.25rem;
     }

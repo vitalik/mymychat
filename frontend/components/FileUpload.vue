@@ -155,6 +155,11 @@ defineExpose({
   i {
     font-size: 1.1rem;
   }
+  
+  // Dark theme - make text brighter
+  [data-theme="dark"] & {
+    color: hsl(var(--foreground-hue), var(--foreground-saturation), calc(var(--foreground-lightness) - 30%));
+  }
 }
 
 .file-list {
